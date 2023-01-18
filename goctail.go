@@ -19,7 +19,7 @@ func LogPrintln(line string) {
 	}
 }
 
-func ReturnLastLines(lines int, filename string) {
+func GetFile(filename string) (*os.File, int64) {
 	file, err := os.Open(filename) // For read access.
 	if err != nil {
 		log.Fatal(err)
@@ -29,6 +29,24 @@ func ReturnLastLines(lines int, filename string) {
 		log.Fatal(err)
 	}
 	var filesize = stats.Size()
+	fmt.Printf("The file is %d bytes long", filesize)
+	return file, filesize
+}
+
+func ReturnLastCount(count int, filename string) {
+	file, filesize := GetFile(filename)
+	fmt.Printf("The file is %d bytes long\n", filesize)
+	file.Seek(int64(count)*-1, os.SEEK_END)
+	data := make([]byte, count)
+	count, err := file.Read(data)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("read %d bytes: \n%s\n", count, data[:count])
+}
+
+func ReturnLastLines(lines int, filename string) {
+	file, filesize := GetFile(filename)
 	fmt.Printf("The file is %d bytes long", filesize)
 	data := make([]byte, 100)
 	count, err := file.Read(data)
@@ -58,6 +76,6 @@ func main() {
 		fmt.Println("")
 
 	}
-
-	ReturnLastLines(lastlinesvar, files[0])
+	ReturnLastCount(lastlinesvar, files[0])
+	// ReturnLastLines(lastlinesvar, files[0])
 }
