@@ -72,16 +72,18 @@ func readReverseChunk(start int, filesize int, file *os.File) string {
 	}
 	// fmt.Printf("%s\n", data[:count])
 
-	return fmt.Sprint(data[:count])
+	return fmt.Sprintf("%s", data[:count])
 }
 
 func processChunkedData(result string, lines int, start int, filesize int, file *os.File) {
 	var amountEndlines = strings.Count(result, "\n")
-	fmt.Printf(">>>>>>> %s", result)
+	// fmt.Printf(">>>>>>> %s <<<< \n", result)
 	LogPrintln("How many endlines", fmt.Sprint(amountEndlines), fmt.Sprint(lines))
-	if amountEndlines == lines {
-		fmt.Printf("%s\n", result)
-	} else if amountEndlines > lines+1 {
+	// if amountEndlines == lines {
+	// 	fmt.Printf(">>>>>>> EQUAL")
+	// 	fmt.Printf("%s", result)
+	// } else 
+	if amountEndlines > lines+1 {
 		for amountEndlines > lines+1 {
 			LogPrintln(fmt.Sprint("a"))
 			amountEndlines = strings.Count(result, "\n")
