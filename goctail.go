@@ -50,7 +50,7 @@ func ReturnLastCount(count int, filename string) {
 }
 
 // Performed reversed read in BUFSIZ chunks
-func readReverseChunk(start int, filesize int, file *os.File) []byte {
+func readReverseChunk(start int, filesize int, file *os.File) string {
 	LogPrintln("readReverseChunk", fmt.Sprint(start))
 
 	// file.Seek(512, )
@@ -70,18 +70,19 @@ func readReverseChunk(start int, filesize int, file *os.File) []byte {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%s\n", data[:count])
+	// fmt.Printf("%s\n", data[:count])
 
-	return data[:count]
+	return fmt.Sprint(data[:count])
 }
 
 func processChunkedData(result string, lines int, start int, filesize int, file *os.File) {
 	var amountEndlines = strings.Count(result, "\n")
+	fmt.Printf(">>>>>>> %s", result)
 	LogPrintln("How many endlines", fmt.Sprint(amountEndlines), fmt.Sprint(lines))
 	if amountEndlines == lines {
 		fmt.Printf("%s\n", result)
 	} else if amountEndlines > lines+1 {
-		for amountEndlines > lines {
+		for amountEndlines > lines+1 {
 			LogPrintln(fmt.Sprint("a"))
 			amountEndlines = strings.Count(result, "\n")
 			LogPrintln("How many endlines2", fmt.Sprint(amountEndlines), fmt.Sprint(lines))
@@ -107,7 +108,7 @@ func processChunkedData(result string, lines int, start int, filesize int, file 
 		start = start - BUFSIZ
 		newResult = fmt.Sprint(readReverseChunk(start, filesize, file))
 		newResult = newResult + result
-		processChunkedData(result, lines, start, filesize, file)
+		processChunkedData(newResult, lines, start, filesize, file)
 	}
 }
 
