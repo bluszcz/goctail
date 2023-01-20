@@ -85,16 +85,30 @@ func ReturnLastLines(lines int, filename string) {
 	// 	log.Fatal(err)
 	// }
 
-	var indexN = strings.Index(result, "\n")
+	// var indexN = strings.Index(result, "\n")
 	if amountEndlines == lines {
 		fmt.Printf("%s\n", result)
-	} else if amountEndlines > lines {
+	} else if amountEndlines > lines+1 {
 
 		for amountEndlines > lines {
+			LogPrintln(fmt.Sprint("a"))
+			var indexN = strings.Index(result, "\n")
+
+			LogPrintln("indexX", fmt.Sprint(indexN))
+			if indexN > 0 {
+				result = result[indexN:]
+			} else {
+				result = result[1:]
+			}
 			// fmt.Printf(fmt.Sprint(strings.Index(result, "\n")))
-			result = result[indexN:]
+
+			// indexN = strings.Index(result, "\n")
+			LogPrintln(fmt.Sprint(amountEndlines))
+
 			amountEndlines = strings.Count(result, "\n")
+			LogPrintln("amountEndLines", fmt.Sprint(amountEndlines))
 		}
+
 		fmt.Printf("%s", result)
 
 	}
