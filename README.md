@@ -21,7 +21,6 @@ $ ./goctail -n 3 /var/log/dpkg.log
 2023-01-18 16:18:22 status installed ca-certificates:all 20211016ubuntu0.22.04.1
 $ ./goctail -c 8 /var/log/dpkg.log
 22.04.1
-╭─bluszcz@ZONA64 ~/Dev/go/goctail  ‹develop*›
 ```
 ## Features to implement
 
