@@ -52,10 +52,7 @@ func ReturnLastCount(count int, filename string) {
 // Performed reversed read in BUFSIZ chunks
 func readReverseChunk(start int, filesize int, file *os.File) string {
 	LogPrintln("readReverseChunk", fmt.Sprint(start))
-
 	// file.Seek(512, )
-	
-
 	// var offsetType int
 	// if start == filesize {
 	// 	offsetType = os.SEEK_END
@@ -68,12 +65,18 @@ func readReverseChunk(start int, filesize int, file *os.File) string {
 	var tmpBufSiz int
 	if start>=BUFSIZ {
 		tmpBufSiz = BUFSIZ
+		file.Seek(int64(start)-int64(BUFSIZ), os.SEEK_SET)
+
 	} else {
-		tmpBufSiz = BUFSIZ-(start-BUFSIZ)
+		tmpBufSiz = start
+		start = 0
+		// fmt.Printf("%d %d %d ", BUFSIZ, start, start-BUFSIZ)
+		// tmpBufSiz = BUFSIZ-(start-BUFSIZ)
+		file.Seek(0, os.SEEK_SET)
+
 	}
 	data := make([]byte, tmpBufSiz)
 	// file.Seek(i6t64(BUFSIZ)*-1, offsetType)
-	file.Seek(int64(start)-int64(BUFSIZ), os.SEEK_SET)
 	count, err := file.Read(data)
 	if err != nil {
 		log.Fatal(err)
@@ -85,13 +88,15 @@ func readReverseChunk(start int, filesize int, file *os.File) string {
 
 func processChunkedData(result string, lines int, start int, filesize int, file *os.File) {
 	var amountEndlines = strings.Count(result, "\n")
-	// fmt.Printf(">>>>>>> %s <<<< \n", result)
+	// fmt.Printf(">>>>>>> %d %d %s <<<< \n", amountEndlines, lines, result)
 	LogPrintln("How many endlines", fmt.Sprint(amountEndlines), fmt.Sprint(lines))
 	// if amountEndlines == lines {
 	// 	fmt.Printf(">>>>>>> EQUAL")
 	// 	fmt.Printf("%s", result)
 	// } else 
 	if amountEndlines > lines {
+		var indexN = strings.Index(result, "\n")
+		result = result[indexN+1:]
 		for amountEndlines > lines+1 {
 			LogPrintln(fmt.Sprint("a"))
 			amountEndlines = strings.Count(result, "\n")
@@ -99,7 +104,6 @@ func processChunkedData(result string, lines int, start int, filesize int, file 
 			var indexN = strings.Index(result, "\n")
 			amountEndlines = strings.Count(result, "\n")
 			LogPrintln("How many endlines3", fmt.Sprint(amountEndlines), fmt.Sprint(lines))
-
 			LogPrintln("indexX", fmt.Sprint(indexN))
 			// if indexN > 0 {
 			result = result[indexN+1:]
