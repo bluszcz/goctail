@@ -35,6 +35,7 @@ func GetFile(filename string) (*os.File, int64) {
 	return file, filesize
 }
 
+// -c
 func ReturnLastCount(count int, filename string) {
 	file, filesize := GetFile(filename)
 	LogPrintln("filesize: " + fmt.Sprint(filesize))
@@ -45,15 +46,14 @@ func ReturnLastCount(count int, filename string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%s\n", data[:count])
+	fmt.Printf("%s", data[:count])
 }
 
 // Performed reversed read in BUFSIZ chunks
 func readReverseChunk(start int, filesize int, file *os.File) string {
 	LogPrintln("readReverseChunk", fmt.Sprint(start))
-	
 	var tmpBufSiz int
-	if start>=BUFSIZ {
+	if start >= BUFSIZ {
 		tmpBufSiz = BUFSIZ
 		file.Seek(int64(start)-int64(BUFSIZ), os.SEEK_SET)
 
@@ -93,19 +93,17 @@ func processChunkedData(result string, lines int, start int, filesize int, file 
 		LogPrintln(fmt.Sprint("Gotta do else"))
 		var newResult string
 		start = start - BUFSIZ
-		if start>0 {
+		if start > 0 {
 			newResult = fmt.Sprint(readReverseChunk(start, filesize, file))
 			newResult = newResult + result
 			processChunkedData(newResult, lines, start, filesize, file)
 		} else {
 			fmt.Printf("%s", result)
-			
 		}
-
-		
 	}
 }
 
+// -n
 func ReturnLastLines(lines int, filename string) {
 	file, filesize := GetFile(filename)
 	LogPrintln("filesize: " + fmt.Sprint(filesize))
