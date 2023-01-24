@@ -1,6 +1,8 @@
 # goctail
 Colorful configurable log output
 
+![image](https://user-images.githubusercontent.com/221943/214445920-42343faa-2a34-4f99-bdb5-8f42a8d8074a.png)
+
 ## Usage
 
 ```
@@ -22,6 +24,7 @@ $ ./goctail -n 3 /var/log/dpkg.log
 $ ./goctail -c 8 /var/log/dpkg.log
 22.04.1
 ```
+
 ## Features to implement
 
 * Basic compatibility wih tail
