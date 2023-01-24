@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
+	"runtime"
 	"strings"
 )
 
@@ -16,10 +18,45 @@ var debug string
 
 var BUFSIZ int = 512
 
+var Reset = "\033[0m"
+var Red = "\033[31m"
+var Green = "\033[32m"
+var Yellow = "\033[33m"
+var Blue = "\033[34m"
+var Purple = "\033[35m"
+var Cyan = "\033[36m"
+var Gray = "\033[37m"
+var White = "\033[97m"
+
+func init() {
+	if runtime.GOOS == "windows" {
+		Reset = ""
+		Red = ""
+		Green = ""
+		Yellow = ""
+		Blue = ""
+		Purple = ""
+		Cyan = ""
+		Gray = ""
+		White = ""
+	}
+}
+
 func LogPrintln(line ...string) {
 	if debug == "true" {
 		log.Println(line)
 	}
+}
+
+// date time = 2023-01-18 16:18:22
+// [1-2][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9z]
+// [0-2][0-9]:[0-5][0-9]:[0-5][0-9]
+func processLine(line []byte) []byte {
+	var regDate = regexp.MustCompile(`([1-2][0-9][0-9][0-9]\-[0-1][0-9]\-[0-3][0-9z])`)
+	var regTime = regexp.MustCompile(`([0-9][0-9]\:[0-1][0-9]\:[0-3][0-9z])`)
+	var returnLine = regDate.ReplaceAll(line, []byte(Blue+"$1"+Reset))
+	var returnLine2 = regTime.ReplaceAll(returnLine, []byte(Purple+"$1"+Reset))
+	return returnLine2
 }
 
 func GetFile(filename string) (*os.File, int64) {
@@ -88,7 +125,8 @@ func processChunkedData(result string, lines int, start int, filesize int, file 
 			LogPrintln(fmt.Sprint(amountEndlines))
 			LogPrintln("amountEndLines", fmt.Sprint(amountEndlines))
 		}
-		fmt.Printf("%s", result)
+		// fmt.Printf("%s", result)
+		fmt.Printf("%s", processLine([]byte(result)))
 	} else {
 		LogPrintln(fmt.Sprint("Gotta do else"))
 		var newResult string
@@ -98,7 +136,7 @@ func processChunkedData(result string, lines int, start int, filesize int, file 
 			newResult = newResult + result
 			processChunkedData(newResult, lines, start, filesize, file)
 		} else {
-			fmt.Printf("%s", result)
+			fmt.Printf("%s", processLine([]byte(result)))
 		}
 	}
 }
@@ -124,6 +162,9 @@ func isFlagPassed(name string) bool {
 }
 
 func main() {
+	var line []byte = []byte("2023-01-18 16:18:21 configure openjdk-11-jre:amd64 11.0.17+8-1ubuntu2~22.04 <none>")
+
+	processLine(line)
 	debug = os.Getenv("DEBUG")
 	// Need to set priority of parsing flags
 	flag.IntVar(&lastlinesvar, "n", 10, "last lines to show")
